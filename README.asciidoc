@@ -1,0 +1,28 @@
+= Farwest Demo
+
+This project is a reimplementation of Observer using the
+Farwest RESTful/HATEOAS Web framework. The Farwest
+framework is not currently available as it is heavily
+worked on but will be released at a later time; in the
+meantime the compiled files are provided.
+
+This project requires Erlang/OTP 22 or above. To run, do:
+
+``` bash
+$ make run
+```
+
+Then open http://localhost:8080 in your favorite browser.
+
+The Observer functionality reimplemented is currently
+limited. Similarly, the HATEOAS features are not fully-fledged
+yet and require a lot more work.
+
+This project may be renamed and maintained as a Web version
+of Observer when Farwest gets closer to completion, depending
+on demand. This project is not currently open source, it is
+only made public in order to discuss Farwest.
+
+You can sponsor my work on this project via
+https://github.com/sponsors/essen or other options
+listed on https://ninenines.eu
