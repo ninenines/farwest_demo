@@ -22,7 +22,10 @@ locate(Req) ->
 	{found, Req}.
 
 links(Req) ->
-	{ok, [], Req}.
+	{ok, [
+		{parent, fwd_system_r},
+		{child, fwd_table_r}
+	], Req}.
 
 get(Req) ->
 	TableList = observer_backend:get_table_list(ets,
@@ -44,7 +47,7 @@ to_representation(Req, html, TableList) ->
 			<<"Table Id">> => case g(id, Table) of ignore -> <<>>; ID -> ID end
 		} || Table <- TableList]
 	},
-	{ok, farwest_auto_html:from_term(Req, Data), Req}.
+	{ok, farwest_html:from_term(Req, Data), Req}.
 
 g(Name, List) ->
 	case lists:keyfind(Name, 1, List) of

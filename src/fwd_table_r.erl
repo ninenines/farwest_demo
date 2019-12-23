@@ -10,6 +10,7 @@
 
 describe() -> #{
 	uri => "/tables/:name",
+	uri_template => "/tables/{name}",
 	media_types => #{
 		html => ["text/html"]
 	},
@@ -23,7 +24,10 @@ locate(Req) ->
 	{found, Req}.
 
 links(Req) ->
-	{ok, [], Req}.
+	{ok, [
+		{parent, fwd_tables_r},
+		{child, fwd_table_row_r}
+	], Req}.
 
 get(Req=#{bindings := #{name := Name0}}) ->
 	Name = binary_to_atom(Name0, utf8),
@@ -42,7 +46,7 @@ get(Req=#{bindings := #{name := Name0}}) ->
 
 to_representation(Req=#{bindings := #{name := Name0}}, html, {Rows, Cols, KeyPos}) ->
 	Data = {'$fw_tab', Cols, stringify(Rows, Name0, KeyPos)},
-	{ok, farwest_auto_html:from_term(Req, Data), Req}.
+	{ok, farwest_html:from_term(Req, Data), Req}.
 
 receive_table(BackendPid, {Rows, Cols}) ->
 	receive

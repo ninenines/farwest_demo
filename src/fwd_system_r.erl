@@ -11,10 +11,11 @@
 describe() -> #{
 	uri => "/",
 	media_types => #{
-		html => ["text/html"]
+		html => ["text/html"],
+		bed => ["application/x-bed"]
 	},
 	operations => #{
-		get => #{output => [html]}
+		get => #{output => [html, bed]}
 	}
 }.
 
@@ -28,9 +29,7 @@ links(Req) ->
 	], Req}.
 
 get(Req) ->
-	{ok, observer_backend:sys_info(), Req}.
-
-to_representation(Req, html, Info) ->
+	Info = observer_backend:sys_info(),
 	Data = #{
 		<<"System and Architecture">> => #{
 			<<"System Version">> => g(otp_release, Info),
@@ -50,7 +49,6 @@ to_representation(Req, html, Info) ->
 			<<"Online schedulers">> => g(schedulers_online, Info),
 			<<"Available schedulers">> => g(schedulers_available, Info)
 		},
-		%% All in bytes.
 		<<"Memory Usage">> => #{ %% All bytes.
 			<<"Total">> => g(total, Info),
 			<<"Processes">> => g(processes, Info),
@@ -76,7 +74,12 @@ to_representation(Req, html, Info) ->
 			end
 		}
 	},
-	{ok, farwest_auto_html:from_term(Req, Data), Req}.
+	{ok, Data, Req}.
+
+to_representation(Req, html, Data) ->
+	{ok, farwest_html:from_term(Req, Data), Req};
+to_representation(Req, bed, Data) ->
+	{ok, farwest_bed:from_term(Req, Data), Req}.
 
 g(Name, List) ->
 	case lists:keyfind(Name, 1, List) of

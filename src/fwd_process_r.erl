@@ -13,7 +13,10 @@
 -export([info/2]).
 
 describe() -> #{
+	%% By making the router support uri templates we could avoid
+	%% this repetition and perhaps use more powerful routing.
 	uri => "/processes/:pid",
+	uri_template => "/processes/{pid}",
 	media_types => #{
 		html => ["text/html"]
 	},
@@ -27,7 +30,9 @@ locate(Req) ->
 	{found, Req}.
 
 links(Req) ->
-	{ok, [], Req}.
+	{ok, [
+		{parent, fwd_processes_r}
+	], Req}.
 
 get(Req=#{bindings := #{pid := Pid0}}) ->
 	Pid = list_to_pid(binary_to_list(Pid0)),
@@ -66,7 +71,7 @@ get(Req=#{bindings := #{pid := Pid0}}) ->
 	{ok, Data, Req}.
 
 to_representation(Req, html, Data) ->
-	{ok, farwest_auto_html:from_term(Req, Data), Req}.
+	{ok, farwest_html:from_term(Req, Data), Req}.
 
 info(Pid, Name) ->
 	case erlang:process_info(Pid, Name) of

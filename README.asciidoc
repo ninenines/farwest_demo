@@ -1,10 +1,7 @@
 = Farwest Demo
 
 This project is a reimplementation of Observer using the
-Farwest RESTful/HATEOAS Web framework. The Farwest
-framework is not currently available as it is heavily
-worked on but will be released at a later time; in the
-meantime the compiled files are provided.
+https://github.com/ninenines/farwest[Farwest RESTful/HATEOAS Web framework].
 
 This project requires Erlang/OTP 22 or above. To run, do:
 
