@@ -10,7 +10,7 @@ start(_Type, _Args) ->
 	Dispatch = cowboy_router:compile([
 		{'_', farwest:list_routes(farwest_demo)}
 	]),
-	{ok, _} = cowboy:start_clear(demo, [{port, 8080}], #{
+	{ok, _} = cowboy:start_clear(clear_farwest_demo, [{port, 8080}], #{
 		env => #{dispatch => Dispatch}
 	}),
 	farwest_demo_sup:start_link().
