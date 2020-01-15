@@ -20,6 +20,7 @@ describe() -> #{
 }.
 
 %% @todo Not necessarily.
+%% @todo forbidden if private
 locate(Req) ->
 	{found, Req}.
 

@@ -37,9 +37,13 @@ to_representation(Req, html, TableList) ->
 		[<<"Table Name">>, <<"Objects">>, <<"Size (kB)">>,
 			<<"Owner Pid">>, <<"Owner Name">>, <<"Table Id">>],
 		[#{
-			<<"Table Name">> => {'$fw_link', child,
-				["/tables/", atom_to_binary(g(name, Table), utf8)],
-				g(name, Table)},
+			<<"Table Name">> => case g(protection, Table) of
+				private -> g(name, Table);
+				_ ->
+					{'$fw_link', child,
+						["/tables/", atom_to_binary(g(name, Table), utf8)],
+						g(name, Table)}
+			end,
 			<<"Objects">> => g(size, Table),
 			<<"Size (kB)">> => g(memory, Table),
 			<<"Owner Pid">> => g(owner, Table),

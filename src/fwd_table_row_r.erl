@@ -25,11 +25,14 @@ describe() -> #{
 }.
 
 %% @todo Not necessarily.
+%% @todo forbidden if private or protected
 locate(Req) ->
 	{found, Req}.
 
 links(Req) ->
 	{ok, [
+		%% @todo Here we should provide bindings as well to rebuild the URI when necessary,
+		%% since our exact parent depends on the bindings we have.
 		{parent, fwd_table_r}
 	], Req}.
 
