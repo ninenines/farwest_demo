@@ -17,6 +17,7 @@ describe() -> #{
 	%% this repetition and perhaps use more powerful routing.
 	uri => "/processes/:pid",
 	uri_template => "/processes/{pid}",
+	constraints => [{pid, fun pid_constraint/2}],
 	media_types => #{
 		html => ["text/html"]
 	},
@@ -25,17 +26,34 @@ describe() -> #{
 	}
 }.
 
-%% @todo Not necessarily.
-locate(Req) ->
-	{found, Req}.
+pid_constraint(forward, Bin) ->
+	try
+		{ok, list_to_pid(binary_to_list(Bin))}
+	catch _:_ ->
+		{error, not_a_pid}
+	end;
+pid_constraint(reverse, Pid) when is_pid(Pid) ->
+	{ok, pid_to_list(Pid)};
+pid_constraint(reverse, _) ->
+	{error, not_a_pid};
+pid_constraint(format_error, {not_a_pid, NotAPid}) ->
+	io_lib:format("The value ~p is not a pid.", [NotAPid]).
+
+%% We may be able to detect if the process
+%% previously existed based on self()?
+%% But that would not be entirely reliable.
+locate(Req=#{bindings := #{pid := Pid}}) ->
+	case is_process_alive(Pid) of
+		true -> {found, Req};
+		false -> {not_found, Req}
+	end.
 
 links(Req) ->
 	{ok, [
 		{parent, fwd_processes_r}
 	], Req}.
 
-get(Req=#{bindings := #{pid := Pid0}}) ->
-	Pid = list_to_pid(binary_to_list(Pid0)),
+get(Req=#{bindings := #{pid := Pid}}) ->
 	Data = #{
 		%% Overview.
 		<<"Initial call">> => mfa(Pid, initial_call),
