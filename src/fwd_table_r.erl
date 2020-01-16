@@ -15,7 +15,8 @@ describe() -> #{
 		html => ["text/html"]
 	},
 	operations => #{
-		get => #{output => [html]}
+		get => #{output => [html]},
+		delete => #{}
 	}
 }.
 
