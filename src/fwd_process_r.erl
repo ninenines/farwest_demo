@@ -107,6 +107,8 @@ mfa(Pid, Name) ->
 		integer_to_binary(A)
 	]).
 
-linkify(Pid) when is_pid(Pid) -> {'$fw_link', child, ["/processes/", cow_uri:urlencode(list_to_binary(pid_to_list(Pid)))], Pid};
+linkify(Pid) when is_pid(Pid) -> {'$fw_link', child,
+	farwest:link_to(fwd_process_r, #{<<"pid">> => list_to_binary(pid_to_list(Pid))}),
+	Pid};
 linkify(List) when is_list(List) -> [linkify(Item) || Item <- List];
 linkify(Other) -> Other.

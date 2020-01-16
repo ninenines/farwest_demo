@@ -79,8 +79,8 @@ stringify_tuple(Tuple, Name, KeyPos) ->
 		_ -> iolist_to_binary(io_lib:format("~0p", [element(Key, Tuple)]))
 	end || Key <- lists:seq(1, tuple_size(Tuple))]).
 
-linkify(Term, Name) ->
+linkify(Term0, Name) ->
+	Term = iolist_to_binary(io_lib:format("~0p", [Term0])),
 	{'$fw_link', child,
-		[<<"/tables/">>, Name, <<"/">>,
-			cow_qs:urlencode(iolist_to_binary(io_lib:format("~0p", [Term])))],
-		iolist_to_binary(io_lib:format("~0p", [Term]))}.
+		farwest:link_to(fwd_table_row_r, #{<<"name">> => Name, <<"key">> => Term}),
+		Term}.

@@ -58,4 +58,6 @@ augment(Pid) ->
 		[]
 	end.
 
-linkify(Pid) -> {'$fw_link', child, ["/processes/", cow_uri:urlencode(list_to_binary(pid_to_list(Pid)))], Pid}.
+linkify(Pid) -> {'$fw_link', child,
+	farwest:link_to(fwd_process_r, #{<<"pid">> => list_to_binary(pid_to_list(Pid))}),
+	Pid}.

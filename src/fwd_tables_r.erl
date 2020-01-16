@@ -41,7 +41,7 @@ to_representation(Req, html, TableList) ->
 				private -> g(name, Table);
 				_ ->
 					{'$fw_link', child,
-						["/tables/", atom_to_binary(g(name, Table), utf8)],
+						farwest:link_to(fwd_table_r, #{<<"name">> => atom_to_binary(g(name, Table), utf8)}),
 						g(name, Table)}
 			end,
 			<<"Objects">> => g(size, Table),
