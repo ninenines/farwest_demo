@@ -69,7 +69,13 @@ put(Req0=#{bindings := #{name := Name0, key := _Key0}}) ->
 	ets:insert(Name, Tuple),
 	{ok, Req}.
 
-delete(_) -> todo.
+%% @todo Observer does a delete_object but it doesn't work very well for us
+%% since we don't want to pass the entire tuple value in the URI.
+delete(Req=#{bindings := #{name := Name0, key := Key0}}) ->
+	Name = binary_to_atom(Name0, utf8),
+	{ok, Key} = parse_string(unicode:characters_to_list(Key0) ++ "."),
+	ets:delete(Name, Key),
+	{ok, Req}.
 
 %% @todo Identical code as in fwd_table_r.
 receive_table(BackendPid, {Rows, Cols}) ->
