@@ -11,8 +11,7 @@
 -export([delete/1]).
 
 describe() -> #{
-	uri => "/tables/:name/:key",
-	uri_template => "/tables/{name}/{key}",
+	uri => "/tables/{name}/{key}",
 	media_types => #{
 		html => ["text/html"],
 		term => ["text/plain"]

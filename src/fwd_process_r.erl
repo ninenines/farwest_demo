@@ -13,10 +13,7 @@
 -export([info/2]).
 
 describe() -> #{
-	%% By making the router support uri templates we could avoid
-	%% this repetition and perhaps use more powerful routing.
-	uri => "/processes/:pid",
-	uri_template => "/processes/{pid}",
+	uri => "/processes/{pid}",
 	constraints => [{pid, fun pid_constraint/2}],
 	media_types => #{
 		html => ["text/html"]

@@ -9,8 +9,7 @@
 -export([to_representation/3]).
 
 describe() -> #{
-	uri => "/tables/:name",
-	uri_template => "/tables/{name}",
+	uri => "/tables/{name}",
 	media_types => #{
 		html => ["text/html"]
 	},
