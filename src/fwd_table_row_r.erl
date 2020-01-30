@@ -14,10 +14,11 @@ describe() -> #{
 	uri => "/tables/{name}/{key}",
 	media_types => #{
 		html => ["text/html"],
+		bed => ["application/x-bed"],
 		term => ["text/plain"]
 	},
 	operations => #{
-		get => #{output => [html]},
+		get => #{output => [html, bed]},
 		put => #{input => [term]},
 		delete => #{}
 	}
@@ -55,7 +56,10 @@ get(Req=#{bindings := #{name := Name0, key := Key0}}) ->
 
 to_representation(Req, html, Row) ->
 	Data = {'$fw_tab', tuple_size(Row), stringify([Row])},
-	{ok, farwest_html:from_term(Req, Data), Req}.
+	{ok, farwest_html:from_term(Req, Data), Req};
+to_representation(Req, bed, Row) ->
+	%% @todo Maybe don't stringify, just linkify.
+	{ok, farwest_bed:from_term(Req, stringify([Row])), Req}.
 
 put(Req0=#{bindings := #{name := Name0, key := _Key0}}) ->
 	Name = binary_to_atom(Name0, utf8),

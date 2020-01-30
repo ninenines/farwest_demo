@@ -11,10 +11,11 @@
 describe() -> #{
 	uri => "/tables",
 	media_types => #{
-		html => ["text/html"]
+		html => ["text/html"],
+		bed => ["application/x-bed"]
 	},
 	operations => #{
-		get => #{output => [html]}
+		get => #{output => [html, bed]}
 	}
 }.
 
@@ -30,28 +31,31 @@ links(Req) ->
 get(Req) ->
 	TableList = observer_backend:get_table_list(ets,
 		[{sys_hidden, false}, {unread_hidden, false}]),
-	{ok, TableList, Req}.
+	Data = [#{
+		<<"Table Name">> => case g(protection, Table) of
+			private -> g(name, Table);
+			_ ->
+				{'$fw_link', child,
+					farwest:link_to(fwd_table_r, #{<<"name">> => atom_to_binary(g(name, Table), utf8)}),
+					g(name, Table)}
+		end,
+		<<"Objects">> => g(size, Table),
+		<<"Size (kB)">> => g(memory, Table),
+		<<"Owner Pid">> => g(owner, Table),
+		<<"Owner Name">> => g(reg_name, Table),
+		<<"Table Id">> => case g(id, Table) of ignore -> <<>>; ID -> ID end
+	} || Table <- TableList],
+	{ok, Data, Req}.
 
-to_representation(Req, html, TableList) ->
+to_representation(Req, html, Data0) ->
 	Data = {'$fw_tab',
 		[<<"Table Name">>, <<"Objects">>, <<"Size (kB)">>,
 			<<"Owner Pid">>, <<"Owner Name">>, <<"Table Id">>],
-		[#{
-			<<"Table Name">> => case g(protection, Table) of
-				private -> g(name, Table);
-				_ ->
-					{'$fw_link', child,
-						farwest:link_to(fwd_table_r, #{<<"name">> => atom_to_binary(g(name, Table), utf8)}),
-						g(name, Table)}
-			end,
-			<<"Objects">> => g(size, Table),
-			<<"Size (kB)">> => g(memory, Table),
-			<<"Owner Pid">> => g(owner, Table),
-			<<"Owner Name">> => g(reg_name, Table),
-			<<"Table Id">> => case g(id, Table) of ignore -> <<>>; ID -> ID end
-		} || Table <- TableList]
+		Data0
 	},
-	{ok, farwest_html:from_term(Req, Data), Req}.
+	{ok, farwest_html:from_term(Req, Data), Req};
+to_representation(Req, bed, Data) ->
+	{ok, farwest_bed:from_term(Req, Data), Req}.
 
 g(Name, List) ->
 	case lists:keyfind(Name, 1, List) of

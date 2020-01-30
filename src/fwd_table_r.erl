@@ -11,10 +11,11 @@
 describe() -> #{
 	uri => "/tables/{name}",
 	media_types => #{
-		html => ["text/html"]
+		html => ["text/html"],
+		bed => ["application/x-bed"]
 	},
 	operations => #{
-		get => #{output => [html]},
+		get => #{output => [html, bed]},
 		delete => #{}
 	}
 }.
@@ -45,9 +46,12 @@ get(Req=#{bindings := #{name := Name0}}) ->
 	{Rows, Cols} = receive_table(BackendPid, {[], 0}),
 	{ok, {Rows, Cols, KeyPos}, Req}.
 
-to_representation(Req=#{bindings := #{name := Name0}}, html, {Rows, Cols, KeyPos}) ->
-	Data = {'$fw_tab', Cols, stringify(Rows, Name0, KeyPos)},
-	{ok, farwest_html:from_term(Req, Data), Req}.
+to_representation(Req=#{bindings := #{name := Name}}, html, {Rows, Cols, KeyPos}) ->
+	Data = {'$fw_tab', Cols, stringify(Rows, Name, KeyPos)},
+	{ok, farwest_html:from_term(Req, Data), Req};
+to_representation(Req=#{bindings := #{name := Name}}, bed, {Rows, _, KeyPos}) ->
+	%% @todo Maybe don't stringify, just linkify.
+	{ok, farwest_bed:from_term(Req, stringify(Rows, Name, KeyPos)), Req}.
 
 receive_table(BackendPid, {Rows, Cols}) ->
 	receive

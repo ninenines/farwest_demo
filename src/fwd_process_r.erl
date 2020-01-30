@@ -16,10 +16,11 @@ describe() -> #{
 	uri => "/processes/{pid}",
 	constraints => [{pid, fun pid_constraint/2}],
 	media_types => #{
-		html => ["text/html"]
+		html => ["text/html"],
+		bed => ["application/x-bed"]
 	},
 	operations => #{
-		get => #{output => [html]}
+		get => #{output => [html, bed]}
 	}
 }.
 
@@ -86,7 +87,9 @@ get(Req=#{bindings := #{pid := Pid}}) ->
 	{ok, Data, Req}.
 
 to_representation(Req, html, Data) ->
-	{ok, farwest_html:from_term(Req, Data), Req}.
+	{ok, farwest_html:from_term(Req, Data), Req};
+to_representation(Req, bed, Data) ->
+	{ok, farwest_bed:from_term(Req, Data), Req}.
 
 info(Pid, Name) ->
 	case erlang:process_info(Pid, Name) of
