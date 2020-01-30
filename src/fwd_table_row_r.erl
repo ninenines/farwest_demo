@@ -15,7 +15,7 @@ describe() -> #{
 	media_types => #{
 		html => ["text/html"],
 		bed => ["application/x-bed"],
-		term => ["text/plain"]
+		term => ["text/plain+erlang-term"]
 	},
 	operations => #{
 		get => #{output => [html, bed]},
